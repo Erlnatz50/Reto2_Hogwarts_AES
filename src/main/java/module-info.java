@@ -1,13 +1,13 @@
-module es.erlantzg {
+module es.cryptowarts {
     requires javafx.controls;
     requires javafx.fxml;
     requires org.slf4j;
     requires jdk.compiler;
     requires java.desktop;
+    requires javafx.graphics;
 
-    opens es.erlantzg.controladores to javafx.fxml;
-    opens es.erlantzg.modelos to javafx.base;
+    opens es.cryptowarts.controladores to javafx.fxml;
 
-    opens es.erlantzg to javafx.fxml;
-    exports es.erlantzg;
+    opens es.cryptowarts to javafx.fxml;
+    exports es.cryptowarts;
 }

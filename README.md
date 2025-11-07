@@ -34,7 +34,7 @@ Además, se aplica una hoja de estilos CSS y se registran eventos y errores con 
 1. Clonar el repositorio.
 2. Abrir en un IDE compatible con JavaFX y SLF4J (Java +17 recomendado).
 3. Configurar dependencias con Maven (`pom.xml`).
-4. Ejecutar la clase principal `es.erlantzg.App`.
+4. Ejecutar la clase principal `es.cryptowarts.App`.
 
 ## ✨ Autor
 - 👤 Erlantz García

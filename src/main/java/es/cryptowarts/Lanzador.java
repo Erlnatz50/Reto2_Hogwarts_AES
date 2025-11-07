@@ -1,4 +1,4 @@
-package es.erlantzg;
+package es.cryptowarts;
 
 /**
  * Clase lanzadora de la aplicación JavaFX.
@@ -13,7 +13,7 @@ public class Lanzador {
     /**
      * Metodo principal de la clase lanzadora.
      * Recibe los argumentos de línea de comandos y los pasa al
-     * {@link es.erlantzg.App#main(String[])} para iniciar la aplicacion.
+     * {@link es.cryptowarts.App#main(String[])} para iniciar la aplicacion.
      *
      * @param args Argumentos de línea de comandos.
      */
