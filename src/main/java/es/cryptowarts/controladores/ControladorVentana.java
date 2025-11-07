@@ -1,19 +1,14 @@
 package es.cryptowarts.controladores;
 
-import es.cryptowarts.App;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
-import javafx.scene.control.TextArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -36,9 +31,23 @@ public class ControladorVentana {
     private ComboBox<String> cmbOpcion;
 
     @FXML
+    private Button btnAreas;
+
+    @FXML
+    private Button btnLimpiarAreas;
+
+    @FXML
+    private Button btnSelecFichero;
+
+    @FXML
     public void initialize() {
-        cmbOpcion.getItems().addAll("Selecciona una opción", "Cifrar", "Descifrar");
+        cmbOpcion.getItems().addAll( "Cifrar", "Descifrar");
         cmbOpcion.setValue("Selecciona una opción");
+
+        txtDcha.setDisable(true);
+        btnAreas.setDisable(true);
+        btnLimpiarAreas.setDisable(true);
+        btnSelecFichero.setDisable(true);
     }
 
     /**  */
@@ -48,10 +57,17 @@ public class ControladorVentana {
     }
 
     @FXML
+    void areaEscribir() {
+        btnAreas.setDisable(txtIzda.getText().trim().isEmpty());
+    }
+
+
+    @FXML
     void btnFichero(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Selecciona un archivo");
         File file = fileChooser.showOpenDialog(null);  // Puedes pasar la ventana principal aquí
+
         if (file != null) {
             // Aquí haces lo que necesites con el fichero seleccionado
             System.out.println("Archivo seleccionado: " + file.getAbsolutePath());
@@ -64,11 +80,20 @@ public class ControladorVentana {
         if (opcion == null) return;
         switch (opcion) {
             case "Cifrar":
-                // Código para cifrar
+                btnSelecFichero.setText("Selecciona el fichero para cifrar");
+                btnAreas.setDisable(false);
+                btnSelecFichero.setDisable(false);
+                btnAreas.setText("Cifrar");
                 break;
             case "Descifrar":
-                // Código para descifrar
+                btnSelecFichero.setText("Selecciona el fichero para descifrar");
+                btnSelecFichero.setDisable(false);
+                btnAreas.setDisable(false);
+                btnAreas.setText("Descifrar");
                 break;
+            default:
+                btnSelecFichero.setText("Selecciona el fichero");
+                btnAreas.setText("Elige una opción");
         }
     }
 
