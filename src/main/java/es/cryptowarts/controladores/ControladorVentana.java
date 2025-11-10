@@ -1,5 +1,6 @@
 package es.cryptowarts.controladores;
 
+import es.cryptowarts.cifrado.Cifrado;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,6 +9,7 @@ import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.Optional;
 
@@ -18,6 +20,12 @@ public class ControladorVentana {
 
     /** Logger para esta clase */
     private static final Logger logger = LoggerFactory.getLogger(ControladorVentana.class);
+
+    @FXML
+    private Label lblArchivo;
+
+    @FXML
+    private Label lblMensaje;
 
     /**  */
     @FXML
@@ -48,13 +56,10 @@ public class ControladorVentana {
         btnAreas.setDisable(true);
         btnLimpiarAreas.setDisable(true);
         btnSelecFichero.setDisable(true);
+        lblMensaje.setText("");
+        lblMensaje.setVisible(false);// Oculta el lblMensaje al inicio
     }
 
-    /**  */
-    @FXML
-    void btnAccion(ActionEvent event) {
-
-    }
 
     @FXML
     void areaEscribir() {
@@ -64,36 +69,85 @@ public class ControladorVentana {
 
     @FXML
     void btnFichero(ActionEvent event) {
+        lblMensaje.setText("");            // Limpia el label de mensajes
+        lblArchivo.setText("");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Selecciona un archivo");
-        File file = fileChooser.showOpenDialog(null);  // Puedes pasar la ventana principal aquí
-
+        File file = fileChooser.showOpenDialog(null);
         if (file != null) {
-            // Aquí haces lo que necesites con el fichero seleccionado
-            System.out.println("Archivo seleccionado: " + file.getAbsolutePath());
+            String str = file.getName();
+            int indexPunto = str.lastIndexOf('.');
+
+            String extension;
+
+            if (indexPunto > 0) { // hay extensión
+                extension = str.substring(indexPunto); // incluye el punto
+            } else { // sin extensión
+                extension = "";
+            }
+            // Pedir clave al usuario
+            String clave = JOptionPane.showInputDialog(null, "Introduce la clave para cifrar/descifrar", "Clave", JOptionPane.PLAIN_MESSAGE);
+            String opcion = (String) cmbOpcion.getValue();
+
+
+            if (clave != null && !clave.trim().isEmpty()) {
+                try {
+                    String textoProcesado;
+                    if (opcion.equalsIgnoreCase("cifrado") || opcion.equalsIgnoreCase("cifrado")) {
+                        // Cifrar el contenido del archivo o texto deseado
+                        // Aquí ejemplo cifrando el nombre base (ajustar según necesidad)
+                        textoProcesado = Cifrado.cifrarArchivo(file.getName(), clave);
+                    } else { // "descifrado"
+                        textoProcesado = Cifrado.descifrarArchivo(file.getName(),clave);
+                    }
+
+
+                    logger.info(file.getName());
+                    lblArchivo.setText(file.getName());
+                    lblMensaje.setText("Archivo creado:");
+                    lblMensaje.setVisible(true);
+                    logger.info("Archivo procesado: {}", file.getName());
+
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Error al procesar con la clave: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    logger.error("Error en cifrado/descifrado", e);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Clave no válida o vacía", "Aviso", JOptionPane.WARNING_MESSAGE);
+            }
         }
     }
 
-    @FXML
-    void cmbAccion(ActionEvent event) {
+    public void btnAccion(ActionEvent event) {
+        String texto = txtIzda.getText();
+        if (texto == null || texto.isEmpty()) {
+            mandarAlertas(Alert.AlertType.WARNING, "Atención", "No hay texto para procesar", "Por favor escribe texto para cifrar o descifrar.");
+            return;
+        }
+
         String opcion = (String) cmbOpcion.getValue();
-        if (opcion == null) return;
-        switch (opcion) {
-            case "Cifrar":
-                btnSelecFichero.setText("Selecciona el fichero para cifrar");
-                btnAreas.setDisable(false);
-                btnSelecFichero.setDisable(false);
-                btnAreas.setText("Cifrar");
-                break;
-            case "Descifrar":
-                btnSelecFichero.setText("Selecciona el fichero para descifrar");
-                btnSelecFichero.setDisable(false);
-                btnAreas.setDisable(false);
-                btnAreas.setText("Descifrar");
-                break;
-            default:
-                btnSelecFichero.setText("Selecciona el fichero");
-                btnAreas.setText("Elige una opción");
+        if (opcion == null || (!opcion.equals("Cifrar") && !opcion.equals("Descifrar"))) {
+            mandarAlertas(Alert.AlertType.WARNING, "Atención", "Opción inválida", "Por favor selecciona 'Cifrar' o 'Descifrar'.");
+            return;
+        }
+
+        String clave = javax.swing.JOptionPane.showInputDialog(null, "Introduce la clave para la operación", "Clave", javax.swing.JOptionPane.PLAIN_MESSAGE);
+
+        if (clave == null || clave.trim().isEmpty()) {
+            mandarAlertas(Alert.AlertType.WARNING, "Atención", "Clave inválida", "Por favor proporciona una clave válida.");
+            return;
+        }
+
+        try {
+            String resultado;
+            if (opcion.equals("Cifrar")) {
+                resultado = Cifrado.cifrarTexto(texto, clave);
+            } else {
+                resultado = Cifrado.descifrarTexto(texto, clave);
+            }
+            txtDcha.setText(resultado);
+        } catch (Exception e) {
+            mandarAlertas(Alert.AlertType.ERROR, "Error", "No se pudo procesar el texto", e.getMessage());
         }
     }
 
@@ -151,4 +205,32 @@ public class ControladorVentana {
         return resultado.isPresent() && resultado.get() == ButtonType.OK;
     }
 
+
+    @FXML
+    public void cmbAccion(ActionEvent actionEvent) {
+        String opcion = (String) cmbOpcion.getValue();
+        if (opcion == null) {
+            btnAreas.setDisable(true);
+            btnSelecFichero.setDisable(true);
+            return;
+        }
+        btnAreas.setDisable(false);           // activar botón acción
+        btnSelecFichero.setDisable(false);    // activar botón selección de archivo
+
+        switch (opcion) {
+            case "Cifrar":
+                btnSelecFichero.setText("Selecciona el fichero para cifrar");
+                btnAreas.setText("Cifrar");
+                break;
+            case "Descifrar":
+                btnSelecFichero.setText("Selecciona el fichero para descifrar");
+                btnAreas.setText("Descifrar");
+                break;
+            default:
+                btnSelecFichero.setText("Selecciona el fichero");
+                btnAreas.setText("Elige una opción");
+                btnAreas.setDisable(true);
+                btnSelecFichero.setDisable(true);
+        }
+    }
 }
