@@ -28,6 +28,9 @@ public class App extends Application {
     /** Logger para esta clase */
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
+    /** Bundle del sistema de internacionalización */
+    private ResourceBundle bundle;
+
     /**
      * Metodo principal que se ejecuta al iniciar la aplicación JavaFX.
      * Carga el FXML, aplica el CSS, configura el stage y muestra la ventana.
@@ -43,9 +46,11 @@ public class App extends Application {
             // Detectar el idioma del sistema
             Locale locale = Locale.getDefault();
 
-            //ResourceBundle bundle = ResourceBundle.getBundle("mensajes", locale);
+            // Bundle del sistema de internacionalización
+            bundle = ResourceBundle.getBundle("es.cryptowarts.mensajes", locale);
 
-            FXMLLoader loaded = new FXMLLoader(getClass().getResource("/es/cryptowarts/fxml/ventana.fxml"));
+            logger.debug("Cargando el archivo FXML: ventana.fxml");
+            FXMLLoader loaded = new FXMLLoader(getClass().getResource("/es/cryptowarts/fxml/ventana.fxml"), bundle);
 
             Scene scene = new Scene(loaded.load());
             logger.info("FXML cargado correctamente");
@@ -57,14 +62,10 @@ public class App extends Application {
                 scene.getStylesheets().add(archivoCSS.toExternalForm());
             } else{
                 logger.error("No se ha podido cargar el CSS");
-                Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-                alerta.setTitle("CSS no encontrado");
-                alerta.setHeaderText(null);
-                alerta.setContentText("No se ha podido cargar la hoja de estilos CSS");
-                alerta.showAndWait();
+                mandarAlertas(Alert.AlertType.INFORMATION, bundle.getString("cssNoEncontrado"), null, bundle.getString("cssNoEncontradoMensaje"));
             }
 
-            stage.setTitle("Adding/Deleting Rows in a TableViews");
+            stage.setTitle("Cifra o descifra con el algortimo de AES");
             stage.setScene(scene);
             stage.setResizable(true);
             stage.setMinWidth(400);
@@ -75,12 +76,26 @@ public class App extends Application {
 
         } catch (Exception e) {
             logger.error("Error al intentar cargar la aplicación: {}", e.getMessage());
-            Alert alerta = new Alert(Alert.AlertType.ERROR);
-            alerta.setTitle("Error");
-            alerta.setHeaderText("Error al iniciar la aplicación");
-            alerta.setContentText("Se ha producido un error al intentar cargar la aplicación");
-            alerta.showAndWait();
+            mandarAlertas(Alert.AlertType.ERROR, bundle.getString("error"), bundle.getString("errorIniciarAplicacion"), bundle.getString("errorIniciarAplicacionMensaje"));
         }
+    }
+
+    /**
+     * Muestra una alerta JavaFX con los datos proporcionados.
+     *
+     * @param tipo Tipo de alerta (INFO, WARNING, ERROR...)
+     * @param titulo Título de la alerta
+     * @param mensajeTitulo Encabezado del mensaje
+     * @param mensaje Contenido del mensaje
+     *
+     * @author Erlantz
+     */
+    private void mandarAlertas(Alert.AlertType tipo, String titulo, String mensajeTitulo, String mensaje) {
+        Alert alerta = new Alert(tipo);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(mensajeTitulo);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
 
     /**
@@ -98,11 +113,7 @@ public class App extends Application {
      * @param args Argumentos de línea de comandos (no usados).
      */
     public static void main(String[] args) {
-        // Para eliminar el warning de "args"
-        @SuppressWarnings("unused")
-        final String[] unusedArgs = args;
-
-        logger.info("Iniciando aplicación JavaFX...");
+        logger.info("Iniciando aplicación Cifrar y Descifrar en AES...");
         launch();
     }
 
