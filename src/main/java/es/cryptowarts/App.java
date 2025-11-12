@@ -41,10 +41,9 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         try{
-            logger.debug("Intentando cargar el FXML: /fxml/visualizarCliente.fxml");
-
             // Detectar el idioma del sistema
-            Locale locale = Locale.getDefault();
+            //Locale locale = Locale.getDefault();
+            Locale locale = new Locale("es");
 
             // Bundle del sistema de internacionalización
             bundle = ResourceBundle.getBundle("es.cryptowarts.mensajes", locale);
@@ -96,6 +95,7 @@ public class App extends Application {
         alerta.setHeaderText(mensajeTitulo);
         alerta.setContentText(mensaje);
         alerta.showAndWait();
+        logger.debug("Alerta mostrada: tipo={}, titulo={}", tipo, titulo);
     }
 
     /**

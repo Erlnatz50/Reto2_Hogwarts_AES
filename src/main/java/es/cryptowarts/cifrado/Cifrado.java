@@ -3,6 +3,7 @@ package es.cryptowarts.cifrado;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.nio.file.Files;
 import java.io.File;
@@ -14,6 +15,7 @@ public class Cifrado {
 
     /** Algoritmo de cifrado utilizado */
     private static final String ALGORITMO = "AES/CBC/PKCS5Padding";
+
     /** Vector de inicialización fijo (debe ser único y seguro en producción) */
     private static final String IV = "abcdefghijklmnop";  // 16 bytes
 
@@ -26,13 +28,13 @@ public class Cifrado {
      * @throws Exception Sí ocurre un error durante el cifrado
      */
     public static String cifrarTexto(String textoPlano, String clave) throws Exception {
-        IvParameterSpec ivSpec = new IvParameterSpec(IV.getBytes("UTF-8"));
+        IvParameterSpec ivSpec = new IvParameterSpec(IV.getBytes(StandardCharsets.UTF_8));
         SecretKeySpec keySpec = new SecretKeySpec(normalizarClave(clave), "AES");
 
         Cipher cifrado = Cipher.getInstance(ALGORITMO);
         cifrado.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
 
-        byte[] encrypted = cifrado.doFinal(textoPlano.getBytes("UTF-8"));
+        byte[] encrypted = cifrado.doFinal(textoPlano.getBytes(StandardCharsets.UTF_8));
         return Base64.getEncoder().encodeToString(encrypted);
     }
 
@@ -45,7 +47,7 @@ public class Cifrado {
      * @throws Exception Sí ocurre un error durante el descifrado
      */
     public static String descifrarTexto(String textoCifrado, String clave) throws Exception {
-        IvParameterSpec ivSpec = new IvParameterSpec(IV.getBytes("UTF-8"));
+        IvParameterSpec ivSpec = new IvParameterSpec(IV.getBytes(StandardCharsets.UTF_8));
         SecretKeySpec keySpec = new SecretKeySpec(normalizarClave(clave), "AES");
 
         Cipher cipher = Cipher.getInstance(ALGORITMO);
@@ -53,7 +55,7 @@ public class Cifrado {
 
         byte[] decodedBytes = Base64.getDecoder().decode(textoCifrado);
         byte[] decrypted = cipher.doFinal(decodedBytes);
-        return new String(decrypted, "UTF-8");
+        return new String(decrypted, StandardCharsets.UTF_8);
     }
 
     /**
@@ -68,20 +70,19 @@ public class Cifrado {
             File archivo = new File(rutaArchivo);
             byte[] datosArchivo = Files.readAllBytes(archivo.toPath());
 
-            IvParameterSpec ivSpec = new IvParameterSpec(IV.getBytes("UTF-8"));
+            IvParameterSpec ivSpec = new IvParameterSpec(IV.getBytes(StandardCharsets.UTF_8));
             SecretKeySpec keySpec = new SecretKeySpec(normalizarClave(clave), "AES");
 
             Cipher cifrado = Cipher.getInstance(ALGORITMO);
             cifrado.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
-
             byte[] encryptedBytes = cifrado.doFinal(datosArchivo);
 
             String nuevoNombre = crearNombreArchivo(archivo.getName(), "cifrado");
             File nuevoArchivo = new File(archivo.getParent(), nuevoNombre);
-
             Files.write(nuevoArchivo.toPath(), encryptedBytes);
 
             return nuevoArchivo.getAbsolutePath();
+
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         }
@@ -99,20 +100,19 @@ public class Cifrado {
             File archivo = new File(rutaArchivo);
             byte[] datosArchivo = Files.readAllBytes(archivo.toPath());
 
-            IvParameterSpec ivSpec = new IvParameterSpec(IV.getBytes("UTF-8"));
+            IvParameterSpec ivSpec = new IvParameterSpec(IV.getBytes(StandardCharsets.UTF_8));
             SecretKeySpec keySpec = new SecretKeySpec(normalizarClave(clave), "AES");
 
             Cipher cifrado = Cipher.getInstance(ALGORITMO);
             cifrado.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-
             byte[] decryptedBytes = cifrado.doFinal(datosArchivo);
 
             String nuevoNombre = crearNombreArchivo(archivo.getName(), "descifrado");
             File nuevoArchivo = new File(archivo.getParent(), nuevoNombre);
-
             Files.write(nuevoArchivo.toPath(), decryptedBytes);
 
             return nuevoArchivo.getAbsolutePath();
+
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         }
@@ -124,10 +124,9 @@ public class Cifrado {
      *
      * @param clave Clave original
      * @return Array de bytes con la clave normalizada para AES
-     * @throws Exception
      */
-    private static byte[] normalizarClave(String clave) throws Exception {
-        byte[] keyBytes = clave.getBytes("UTF-8");
+    private static byte[] normalizarClave(String clave)  {
+        byte[] keyBytes = clave.getBytes(StandardCharsets.UTF_8);
         byte[] keyBytes16 = new byte[16];
         System.arraycopy(keyBytes, 0, keyBytes16, 0, Math.min(keyBytes.length, 16));
         return keyBytes16;
