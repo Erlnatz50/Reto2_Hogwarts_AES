@@ -1,0 +1,97 @@
+/* Menú superior */
+.menu-bar {
+    -fx-background-color: #3b3b3b;
+}
+
+.menu-bar .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.menu-item {
+    -fx-background-color: white;
+}
+
+.menu-item:hover {
+    -fx-background-color: #eeeeee;
+}
+
+/* Botones principales */
+.button {
+    -fx-background-color: #536878;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 6 12 6 12;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #6c8498;
+}
+
+.button:pressed {
+    -fx-background-color: #3f5666;
+}
+
+/* Etiquetas */
+.label {
+    -fx-text-fill: #333333;
+    -fx-font-size: 12px;
+}
+
+#lblMensaje {
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+#lblArchivo {
+    -fx-text-fill: #555555;
+    -fx-font-style: italic;
+}
+
+/* Campos de texto */
+.text-area {
+    -fx-control-inner-background: #ffffff;
+    -fx-border-color: #b0b0b0;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-highlight-fill: #a3c9f5;
+    -fx-highlight-text-fill: #000000;
+}
+
+.text-area:focused {
+    -fx-border-color: #5a8bea;
+}
+
+/* ComboBox */
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #b0b0b0;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.combo-box:hover {
+    -fx-border-color: #5a8bea;
+}
+
+/* ScrollPane */
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+/* Tooltips */
+.tooltip {
+    -fx-background-color: rgba(60, 60, 60, 0.9);
+    -fx-text-fill: white;
+    -fx-padding: 6;
+    -fx-background-radius: 6;
+}
+
+/* Imagen de Hogwarts */
+.image-view {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8, 0, 2, 2);
+    -fx-padding: 8;
+}
