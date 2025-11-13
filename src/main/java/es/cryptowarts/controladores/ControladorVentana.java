@@ -1,7 +1,7 @@
 
 package es.cryptowarts.controladores;
 
-import es.cryptowarts.cifrado.Cifrado;
+import es.cryptowarts.cifrado.CifradoAES;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -136,9 +136,9 @@ public class ControladorVentana {
         try {
             String resultado;
             if (opcion.equalsIgnoreCase(bundle.getString(CIFRAR))) {
-                resultado = Cifrado.cifrarArchivo(file.getAbsolutePath(), clave);
+                resultado = CifradoAES.cifrarArchivo(file.getAbsolutePath(), clave);
             } else {
-                resultado = Cifrado.descifrarArchivo(file.getAbsolutePath(), clave);
+                resultado = CifradoAES.descifrarArchivo(file.getAbsolutePath(), clave);
             }
 
             lblArchivo.setText(resultado);
@@ -174,9 +174,9 @@ public class ControladorVentana {
         try {
             String resultado;
             if (opcion.equals(bundle.getString(CIFRAR))) {
-                resultado = Cifrado.cifrarTexto(texto, clave);
+                resultado = CifradoAES.cifrarTexto(texto, clave);
             } else {
-                resultado = Cifrado.descifrarTexto(texto, clave);
+                resultado = CifradoAES.descifrarTexto(texto, clave);
             }
 
             txtDcha.setText(resultado);
