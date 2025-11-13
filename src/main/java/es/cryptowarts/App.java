@@ -93,7 +93,7 @@ public class App extends Application {
         alerta.setHeaderText(mensajeTitulo);
         alerta.setContentText(mensaje);
         alerta.showAndWait();
-        logger.debug("Alerta mostrada: tipo={}, titulo={}", tipo, titulo);
+        logger.debug("Alerta mostrada: tipo={}, mensaje={}", tipo, mensaje);
     }
 
     /**
