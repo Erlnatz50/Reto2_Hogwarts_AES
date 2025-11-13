@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Tooltip?>
@@ -127,19 +128,50 @@
                            <Insets left="5.0" />
                         </GridPane.margin>
                      </Label>
+                  <GridPane.margin>
+                     <Insets top="10.0" />
+                  </GridPane.margin>
                </GridPane>
+               <BorderPane.margin>
+                  <Insets top="10.0" />
+               </BorderPane.margin>
             </GridPane>
          </center>
-
          <top>
-            <ComboBox fx:id="cmbOpcion" onAction="#cmbAccion" prefHeight="25.0" prefWidth="212.0" BorderPane.alignment="CENTER_LEFT">
+            <GridPane BorderPane.alignment="CENTER">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <ComboBox fx:id="cmbOpcion" maxWidth="1.7976931348623157E308" onAction="#cmbAccion" prefHeight="25.0" prefWidth="212.0">
+                     <tooltip>
+                        <Tooltip text="%cmbMensaje" />
+                     </tooltip>
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="15.0" />
+                     </GridPane.margin>
+                  </ComboBox>
+                  <RadioButton alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" text="Vigenere" GridPane.columnIndex="2">
+                     <GridPane.margin>
+                        <Insets top="10.0" />
+                     </GridPane.margin>
+                  </RadioButton>
+                  <RadioButton mnemonicParsing="false" text="AES" GridPane.columnIndex="3">
+                     <GridPane.margin>
+                        <Insets top="10.0" />
+                     </GridPane.margin>
+                  </RadioButton>
+               </children>
                <BorderPane.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                  <Insets top="5.0" />
                </BorderPane.margin>
-               <tooltip>
-                  <Tooltip text="%cmbMensaje" />
-               </tooltip>
-            </ComboBox>
+            </GridPane>
          </top>
 
       </BorderPane>
