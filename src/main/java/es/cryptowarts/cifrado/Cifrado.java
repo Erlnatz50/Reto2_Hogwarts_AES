@@ -20,50 +20,59 @@ public class Cifrado {
     private static final String IV = "abcdefghijklmnop";  // 16 bytes
 
     /**
-     * Cifra un texto plano usando AES CBC con PKCS5Padding.
+     * Cifra un texto plano utilizando AES CBC con PKCS5Padding.
+     * Devuelve el texto cifrado codificado en Base64 o un mensaje de error detallado.
      *
-     * @param textoPlano (str) Texto a cifrar
-     * @param clave      (str) Clave secreta para cifrado (se normaliza a 16 bytes)
-     * @return Texto cifrado codificado en Base64
-     * @throws Exception Sí ocurre un error durante el cifrado
+     * @param textoPlano Texto original sin cifrar
+     * @param clave Clave secreta para cifrar (se normaliza a 16 bytes)
+     * @return Texto cifrado en Base64 o mensaje de error
      */
-    public static String cifrarTexto(String textoPlano, String clave) throws Exception {
-        IvParameterSpec ivSpec = new IvParameterSpec(IV.getBytes(StandardCharsets.UTF_8));
-        SecretKeySpec keySpec = new SecretKeySpec(normalizarClave(clave), "AES");
+    public static String cifrarTexto(String textoPlano, String clave) {
+        try {
+            IvParameterSpec ivSpec = new IvParameterSpec(IV.getBytes(StandardCharsets.UTF_8));
+            SecretKeySpec keySpec = new SecretKeySpec(normalizarClave(clave), "AES");
 
-        Cipher cifrado = Cipher.getInstance(ALGORITMO);
-        cifrado.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
+            Cipher cifrado = Cipher.getInstance(ALGORITMO);
+            cifrado.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
 
-        byte[] encrypted = cifrado.doFinal(textoPlano.getBytes(StandardCharsets.UTF_8));
-        return Base64.getEncoder().encodeToString(encrypted);
+            byte[] encrypted = cifrado.doFinal(textoPlano.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(encrypted);
+        } catch (Exception e) {
+            return "Error al cifrar texto: " + e.getMessage();
+        }
     }
 
     /**
-     * Descifra un texto cifrado en Base64 usando AES CBC con PKCS5Padding.
+     * Descifra un texto cifrado codificado en Base64 usando AES CBC con PKCS5Padding.
+     * Devuelve el texto original o un mensaje de error detallado.
      *
-     * @param textoCifrado (str) Texto cifrado en Base64
-     * @param clave        (str) Clave secreta para descifrado (debe coincidir con la usada para cifrar)
-     * @return Texto descifrado original
-     * @throws Exception Sí ocurre un error durante el descifrado
+     * @param textoCifrado Texto cifrado en Base64
+     * @param clave Clave secreta para descifrar (debe coincidir con la usada para cifrar)
+     * @return Texto original descifrado o mensaje de error
      */
     public static String descifrarTexto(String textoCifrado, String clave) throws Exception {
-        IvParameterSpec ivSpec = new IvParameterSpec(IV.getBytes(StandardCharsets.UTF_8));
-        SecretKeySpec keySpec = new SecretKeySpec(normalizarClave(clave), "AES");
+        try {
+            IvParameterSpec ivSpec = new IvParameterSpec(IV.getBytes(StandardCharsets.UTF_8));
+            SecretKeySpec keySpec = new SecretKeySpec(normalizarClave(clave), "AES");
 
-        Cipher cipher = Cipher.getInstance(ALGORITMO);
-        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+            Cipher cipher = Cipher.getInstance(ALGORITMO);
+            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
 
-        byte[] decodedBytes = Base64.getDecoder().decode(textoCifrado);
-        byte[] decrypted = cipher.doFinal(decodedBytes);
-        return new String(decrypted, StandardCharsets.UTF_8);
+            byte[] decodedBytes = Base64.getDecoder().decode(textoCifrado);
+            byte[] decrypted = cipher.doFinal(decodedBytes);
+            return new String(decrypted, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return "Error al descifrar texto: " + e.getMessage();
+        }
     }
 
     /**
-     * Cifra un archivo completo y genera un nuevo archivo cifrado con sufijo "_cifrado".
+     * Cifra un archivo completo y guarda el archivo cifrado con sufijo "_cifrado" en el mismo directorio.
+     * Devuelve la ruta del archivo cifrado o un mensaje de error.
      *
-     * @param rutaArchivo (str) Ruta del archivo a cifrar
-     * @param clave       (str) Clave secreta para cifrado
-     * @return Mensaje indicando éxito o error durante la creación del archivo cifrado
+     * @param rutaArchivo Ruta del archivo original a cifrar
+     * @param clave Clave secreta de cifrado
+     * @return Ruta del archivo cifrado o mensaje de error
      */
     public static String cifrarArchivo(String rutaArchivo, String clave) {
         try {
@@ -89,11 +98,12 @@ public class Cifrado {
     }
 
     /**
-     * Descifra un archivo completo y genera un nuevo archivo descifrado con sufijo "_descifrado".
+     * Descifra un archivo completo y guarda el archivo con sufijo "_descifrado" en el mismo directorio.
+     * Devuelve la ruta del archivo descifrado o mensaje de error.
      *
-     * @param rutaArchivo (str) Ruta del archivo a descifrar
-     * @param clave       (str) Clave secreta para descifrado
-     * @return Mensaje indicando éxito o error durante la creación del archivo descifrado
+     * @param rutaArchivo Ruta del archivo cifrado a descifrar
+     * @param clave Clave secreta usada para descifrar
+     * @return Ruta del archivo descifrado o mensaje de error
      */
     public static String descifrarArchivo(String rutaArchivo, String clave) {
         try {
@@ -119,11 +129,11 @@ public class Cifrado {
     }
 
     /**
-     * Normaliza una clave para tener 16 bytes (128 bits) para AES.
-     * Si la clave es más corta, se rellena con ceros, si es más larga solo se toman los primeros 16 bytes.
+     * Normaliza la clave para que tenga exactamente 16 bytes (128 bits) para AES.
+     * Si es más corta, se rellena con ceros; si es más larga, se trunca.
      *
-     * @param clave Clave original
-     * @return Array de bytes con la clave normalizada para AES
+     * @param clave Clave original en forma de String
+     * @return Array de bytes con la clave normalizada a 16 bytes
      */
     private static byte[] normalizarClave(String clave)  {
         byte[] keyBytes = clave.getBytes(StandardCharsets.UTF_8);
@@ -133,11 +143,11 @@ public class Cifrado {
     }
 
     /**
-     * Crea un nombre nuevo para archivo que mantiene la extensión original y añade un sufijo.
+     * Construye un nuevo nombre para un archivo añadiendo un sufijo antes de la extensión.
      *
-     * @param nombreOriginal Nombre original del archivo
-     * @param operacion      Texto que indica la operación realizada (ej. "cifrado", "descifrado")
-     * @return Nombre modificado con sufijo y la misma extensión
+     * @param nombreOriginal Nombre original del archivo (ejemplo: documento.txt)
+     * @param operacion Texto a añadir como sufijo (ejemplo: cifrado, descifrado)
+     * @return Nombre del archivo modificado (ejemplo: documento_cifrado.txt)
      */
     private static String crearNombreArchivo(String nombreOriginal, String operacion) {
         int indicePunto = nombreOriginal.lastIndexOf('.');
