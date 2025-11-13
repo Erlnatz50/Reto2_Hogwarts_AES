@@ -1,7 +1,7 @@
 
 package es.cryptowarts.controladores;
 
-import es.cryptowarts.cifrado.CifradoAES;
+import es.cryptowarts.cifrado.Cifrado;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -9,6 +9,7 @@ import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.Locale;
 import java.util.Optional;
@@ -77,12 +78,22 @@ public class ControladorVentana {
     @FXML
     private Button btnSelecFichero;
 
+    /**  */
+    private static final String CIFRAR = "cifrar";
+
+    /**  */
+    private static final String DESCIFRAR = "descifrar";
+
+    /**  */
+    private static final String SELECCIONA_OPCION = "seleccionaOpcion";
+
+
     @FXML
     public void initialize() {
         bundle = ResourceBundle.getBundle("es.cryptowarts.mensaje", Locale.getDefault());
 
-        cmbOpcion.getItems().addAll("Cifrar", "Descifrar");
-        cmbOpcion.setValue("Selecciona una opción");
+        cmbOpcion.getItems().addAll(bundle.getString(CIFRAR), bundle.getString(DESCIFRAR));
+        cmbOpcion.setValue(bundle.getString(SELECCIONA_OPCION));
 
         btnAreas.setDisable(true);
         btnLimpiarAreas.setDisable(true);
@@ -103,87 +114,87 @@ public class ControladorVentana {
         lblArchivo.setText("");
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Selecciona un archivo");
+        fileChooser.setTitle(bundle.getString("seleccionaArchivo"));
         File file = fileChooser.showOpenDialog(null);
 
         if (file == null) {
             return;
         }
 
-        String clave = pedirClave("Introduce la clave para cifrar/descifrar");
+        String clave = pedirClave(bundle.getString("introduceClave"));
         if (clave == null || clave.trim().isEmpty()) {
-            mandarAlertas(Alert.AlertType.WARNING, "Clave inválida", "", "Por favor, introduce una clave válida.");
+            mandarAlertas(Alert.AlertType.WARNING, bundle.getString("claveInvalida"), null, bundle.getString("claveInvalidaMensaje"));
             return;
         }
 
         String opcion = cmbOpcion.getValue();
-        if (opcion == null || opcion.equals("Selecciona una opción")) {
-            mandarAlertas(Alert.AlertType.WARNING, "Opción inválida", "", "Seleccione 'Cifrar' o 'Descifrar' antes de continuar.");
+        if (opcion == null || opcion.equals(bundle.getString(SELECCIONA_OPCION))) {
+            mandarAlertas(Alert.AlertType.WARNING, bundle.getString("opcionInvalida"), null, bundle.getString("opcionInvalidaMensaje"));
             return;
         }
 
         try {
             String resultado;
-            if (opcion.equalsIgnoreCase("Cifrar")) {
-                resultado = CifradoAES.cifrarArchivo(file.getAbsolutePath(), clave);
+            if (opcion.equalsIgnoreCase(bundle.getString(CIFRAR))) {
+                resultado = Cifrado.cifrarArchivo(file.getAbsolutePath(), clave);
             } else {
-                resultado = CifradoAES.descifrarArchivo(file.getAbsolutePath(), clave);
+                resultado = Cifrado.descifrarArchivo(file.getAbsolutePath(), clave);
             }
 
             lblArchivo.setText(resultado);
-            lblMensaje.setText("Archivo procesado:");
+            lblMensaje.setText(bundle.getString("archivoProcesado"));
             lblMensaje.setVisible(true);
             logger.info("Archivo procesado: {}", resultado);
 
         } catch (Exception e) {
-            logger.error("Error procesando archivo", e);
-            mandarAlertas(Alert.AlertType.ERROR, "Error", "", "No se pudo procesar el archivo: " + e.getMessage());
+            logger.error("Error procesando archivo {}", e.getMessage(), e);
+            mandarAlertas(Alert.AlertType.ERROR, bundle.getString("error"), null, bundle.getString("noSePudoProcesarMensaje") + " " + e.getMessage());
         }
     }
 
     public void btnAccion() {
         String texto = txtIzda.getText();
         if (texto == null || texto.isEmpty()) {
-            mandarAlertas(Alert.AlertType.WARNING, "Atención", "No hay texto para procesar", "Por favor, introduce texto para cifrar o descifrar.");
+            mandarAlertas(Alert.AlertType.WARNING, bundle.getString("atencion"), bundle.getString("noHayTextoTitulo"), bundle.getString("noHayTextoMensaje"));
             return;
         }
 
         String opcion = cmbOpcion.getValue();
-        if (opcion == null || (!opcion.equals("Cifrar") && !opcion.equals("Descifrar"))) {
-            mandarAlertas(Alert.AlertType.WARNING, "Atención", "Opción inválida", "Por favor, selecciona 'Cifrar' o 'Descifrar'.");
+        if (opcion == null || (!opcion.equals(bundle.getString(CIFRAR)) && !opcion.equals(bundle.getString(DESCIFRAR)))) {
+            mandarAlertas(Alert.AlertType.WARNING, bundle.getString("atencion"), bundle.getString("opcionInvalida"), bundle.getString("opcionInvalidaMensaje2"));
             return;
         }
 
-        String clave = pedirClave("Introduce la clave para la operación");
+        String clave = pedirClave(bundle.getString("introduceClave"));
         if (clave == null || clave.trim().isEmpty()) {
-            mandarAlertas(Alert.AlertType.WARNING, "Atención", "Clave inválida", "Por favor, proporciona una clave válida.");
+            mandarAlertas(Alert.AlertType.WARNING, bundle.getString("atencion"), bundle.getString("opcionInvalida"), bundle.getString("claveInvalidaMensaje"));
             return;
         }
 
         try {
             String resultado;
-            if (opcion.equals("Cifrar")) {
-                resultado = CifradoAES.cifrarTexto(texto, clave);
+            if (opcion.equals(bundle.getString(CIFRAR))) {
+                resultado = Cifrado.cifrarTexto(texto, clave);
             } else {
-                resultado = CifradoAES.descifrarTexto(texto, clave);
+                resultado = Cifrado.descifrarTexto(texto, clave);
             }
-            txtDcha.setText(resultado);
 
+            txtDcha.setText(resultado);
 
         } catch (Exception e) {
             logger.error("Error al procesar el texto", e);
-            mandarAlertas(Alert.AlertType.ERROR, "Error", "No se pudo procesar el texto", e.getMessage());
+            mandarAlertas(Alert.AlertType.ERROR, bundle.getString("error"), bundle.getString("noSePuedeProcesarTexto") + " ", e.getMessage());
         }
     }
 
     @FXML
     void btnAcercaDe() {
-        mandarAlertas(Alert.AlertType.INFORMATION, "Acerca de", "", "CryptoWarts v1.0\nHecho con JavaFX y AES CBC.");
+        mandarAlertas(Alert.AlertType.INFORMATION, bundle.getString("acercaDe"), null, bundle.getString("acercaDeMensaje"));
     }
 
     @FXML
     void btnLimpiar() {
-        boolean confirmar = mandarConfirmacion("Limpiar áreas", "¿Deseas limpiar las áreas?");
+        boolean confirmar = mandarConfirmacion(bundle.getString("btnLimpiarAreas"), bundle.getString("limpiarAreasMensaje"));
         if (confirmar) {
             txtDcha.clear();
             txtIzda.clear();
@@ -195,7 +206,7 @@ public class ControladorVentana {
 
     @FXML
     void btnCerrar() {
-        boolean confirmar = mandarConfirmacion("Cerrar aplicación", "¿Deseas cerrar la aplicación?");
+        boolean confirmar = mandarConfirmacion(bundle.getString("cerrarAplicacion"), bundle.getString("cerrarAplicacionMensaje"));
         if (confirmar) {
             Platform.exit();
         }
@@ -205,32 +216,26 @@ public class ControladorVentana {
     public void cmbAccion() {
         String opcion = cmbOpcion.getValue();
 
+        btnSelecFichero.setText(bundle.getString("seleccionaArchivo"));
+
         if (opcion == null) {
             btnAreas.setDisable(true);
             btnSelecFichero.setDisable(true);
             return;
         }
 
-
         btnSelecFichero.setDisable(false);
 
-        switch (opcion) {
-            case "Cifrar":
-                btnSelecFichero.setText("Selecciona un archivo");
-                btnAreas.setText("Cifrar");
-                break;
-
-            case "Descifrar":
-                btnSelecFichero.setText("Selecciona un archivo");
-                btnAreas.setText("Descifrar");
-                break;
-
-            default:
-                btnSelecFichero.setText("Selecciona un archivo");
-                btnAreas.setText("Elige una opción");
-                btnAreas.setDisable(true);
-                btnSelecFichero.setDisable(true);
+        if (opcion.equals(bundle.getString(CIFRAR))) {
+            btnAreas.setText(bundle.getString(CIFRAR));
+        } else if (opcion.equals(bundle.getString(DESCIFRAR))) {
+            btnAreas.setText(bundle.getString(DESCIFRAR));
+        } else {
+            btnAreas.setText(bundle.getString("eligeOpcion"));
+            btnAreas.setDisable(true);
+            btnSelecFichero.setDisable(true);
         }
+
     }
 
     /**
@@ -247,7 +252,7 @@ public class ControladorVentana {
         alerta.setHeaderText(mensajeTitulo);
         alerta.setContentText(mensaje);
         alerta.showAndWait();
-        logger.debug("Alerta mostrada: tipo={}, titulo={}", tipo, titulo);
+        logger.debug("Alerta mostrada: tipo={}, mensaje={}", tipo, mensaje);
     }
 
     /**
@@ -268,7 +273,7 @@ public class ControladorVentana {
 
     private String pedirClave(String mensaje) {
         TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Clave requerida");
+        dialog.setTitle(bundle.getString("claveRequerida"));
         dialog.setHeaderText(null);
         dialog.setContentText(mensaje);
         Optional<String> resultado = dialog.showAndWait();

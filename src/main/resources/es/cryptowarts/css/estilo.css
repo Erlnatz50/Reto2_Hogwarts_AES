@@ -1,4 +1,10 @@
 /* Menú superior */
+.label {
+    -fx-text-fill: #333333;
+    -fx-font-size: 12px;
+}
+
+/* Menú superior */
 .menu-bar {
     -fx-background-color: #3b3b3b;
 }
@@ -8,8 +14,13 @@
     -fx-font-weight: bold;
 }
 
+
 .menu-item {
     -fx-background-color: white;
+}
+
+.menu-item .label {
+    -fx-text-fill: black;
 }
 
 .menu-item:hover {
