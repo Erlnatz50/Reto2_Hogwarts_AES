@@ -1,12 +1,17 @@
 package es.cryptowarts.cifrado;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.io.File;
+import java.security.GeneralSecurityException;
 
 /**
  * Clase para cifrar y descifrar texto y archivos usando el cifrado clásico Vigenère.
  * Esta versión usa concatenación de String tradicional para construir los textos.
+ *
+ * @author Telmo
+ * @version 1.0
  */
 public class CifradoVigenere {
 
@@ -15,27 +20,26 @@ public class CifradoVigenere {
      * @param textoPlano Texto original sin cifrar
      * @param clave Clave de cifrado (se repite correspondiente al texto)
      * @return Texto cifrado o mensaje de error
+     * @throws GeneralSecurityException si la clave es nula o vacía
+     *
+     * @author Telmo
      */
-    public static String cifrarTexto(String textoPlano, String clave) {
-        try {
-            String cifrado = "";
-            int claveLen = clave.length();
-            for (int i = 0; i < textoPlano.length(); i++) {
-                char plainChar = textoPlano.charAt(i);
-                char keyChar = clave.charAt(i % claveLen);
-                if (Character.isLetter(plainChar)) {
-                    char base = Character.isUpperCase(plainChar) ? 'A' : 'a';
-                    char baseKey = Character.isUpperCase(keyChar) ? 'A' : 'a';
-                    int shift = (plainChar - base + (keyChar - baseKey)) % 26;
-                    cifrado = cifrado + (char) (base + shift);
-                } else {
-                    cifrado = cifrado + plainChar;
-                }
+    public static String cifrarTexto(String textoPlano, String clave) throws GeneralSecurityException {
+        StringBuilder cifrado = new StringBuilder();
+        int claveLen = clave.length();
+        for (int i = 0; i < textoPlano.length(); i++) {
+            char plainChar = textoPlano.charAt(i);
+            char keyChar = clave.charAt(i % claveLen);
+            if (Character.isLetter(plainChar)) {
+                char base = Character.isUpperCase(plainChar) ? 'A' : 'a';
+                char baseKey = Character.isUpperCase(keyChar) ? 'A' : 'a';
+                int shift = (plainChar - base + (keyChar - baseKey)) % 26;
+                cifrado.append((char) (base + shift));
+            } else {
+                cifrado.append(plainChar);
             }
-            return cifrado;
-        } catch (Exception e) {
-            return "Error al cifrar texto: " + e.getMessage();
         }
+        return cifrado.toString();
     }
 
     /**
@@ -43,27 +47,26 @@ public class CifradoVigenere {
      * @param textoCifrado Texto cifrado
      * @param clave Clave usada para descifrar (misma clave del cifrado)
      * @return Texto descifrado o mensaje de error
+     * @throws GeneralSecurityException si la clave es nula o vacía
+     *
+     * @author Telmo
      */
-    public static String descifrarTexto(String textoCifrado, String clave) {
-        try {
-            String descifrado = "";
-            int claveLen = clave.length();
-            for (int i = 0; i < textoCifrado.length(); i++) {
-                char encChar = textoCifrado.charAt(i);
-                char keyChar = clave.charAt(i % claveLen);
-                if (Character.isLetter(encChar)) {
-                    char base = Character.isUpperCase(encChar) ? 'A' : 'a';
-                    char baseKey = Character.isUpperCase(keyChar) ? 'A' : 'a';
-                    int shift = (encChar - base - (keyChar - baseKey) + 26) % 26;
-                    descifrado = descifrado + (char) (base + shift);
-                } else {
-                    descifrado = descifrado + encChar;
-                }
+    public static String descifrarTexto(String textoCifrado, String clave) throws GeneralSecurityException {
+        StringBuilder descifrado = new StringBuilder();
+        int claveLen = clave.length();
+        for (int i = 0; i < textoCifrado.length(); i++) {
+            char encChar = textoCifrado.charAt(i);
+            char keyChar = clave.charAt(i % claveLen);
+            if (Character.isLetter(encChar)) {
+                char base = Character.isUpperCase(encChar) ? 'A' : 'a';
+                char baseKey = Character.isUpperCase(keyChar) ? 'A' : 'a';
+                int shift = (encChar - base - (keyChar - baseKey) + 26) % 26;
+                descifrado.append((char) (base + shift));
+            } else {
+                descifrado.append(encChar);
             }
-            return descifrado;
-        } catch (Exception e) {
-            return "Error al descifrar texto: " + e.getMessage();
         }
+        return descifrado.toString();
     }
 
     /**
@@ -72,22 +75,22 @@ public class CifradoVigenere {
      * @param rutaArchivo Ruta del archivo a cifrar
      * @param clave Clave de cifrado
      * @return Ruta del archivo cifrado o mensaje de error
+     * @throws IOException si ocurre error de lectura o escritura
+     * @throws GeneralSecurityException si la clave es inválida
+     *
+     * @author Telmo
      */
-    public static String cifrarArchivo(String rutaArchivo, String clave) {
-        try {
-            File archivo = new File(rutaArchivo);
-            String texto = new String(Files.readAllBytes(archivo.toPath()), StandardCharsets.UTF_8);
+    public static String cifrarArchivo(String rutaArchivo, String clave) throws IOException, GeneralSecurityException {
+        File archivo = new File(rutaArchivo);
+        String texto = Files.readString(archivo.toPath());
 
-            String cifrado = cifrarTexto(texto, clave);
+        String cifrado = cifrarTexto(texto, clave);
 
-            String nuevoNombre = crearNombreArchivo(archivo.getName(), "cifrado");
-            File nuevoArchivo = new File(archivo.getParent(), nuevoNombre);
-            Files.write(nuevoArchivo.toPath(), cifrado.getBytes(StandardCharsets.UTF_8));
+        String nuevoNombre = crearNombreArchivo(archivo.getName(), "cifrado");
+        File nuevoArchivo = new File(archivo.getParent(), nuevoNombre);
+        Files.write(nuevoArchivo.toPath(), cifrado.getBytes(StandardCharsets.UTF_8));
 
-            return nuevoArchivo.getAbsolutePath();
-        } catch (Exception e) {
-            return "Error al cifrar archivo: " + e.getMessage();
-        }
+        return nuevoArchivo.getAbsolutePath();
     }
 
     /**
@@ -96,22 +99,22 @@ public class CifradoVigenere {
      * @param rutaArchivo Ruta del archivo cifrado
      * @param clave Clave de descifrado
      * @return Ruta del archivo descifrado o mensaje de error
+     * @throws IOException si ocurre error de lectura o escritura
+     * @throws GeneralSecurityException si la clave es inválida
+     *
+     * @author Telmo
      */
-    public static String descifrarArchivo(String rutaArchivo, String clave) {
-        try {
-            File archivo = new File(rutaArchivo);
-            String cifrado = new String(Files.readAllBytes(archivo.toPath()), StandardCharsets.UTF_8);
+    public static String descifrarArchivo(String rutaArchivo, String clave) throws IOException, GeneralSecurityException {
+        File archivo = new File(rutaArchivo);
+        String cifrado = Files.readString(archivo.toPath());
 
-            String descifrado = descifrarTexto(cifrado, clave);
+        String descifrado = descifrarTexto(cifrado, clave);
 
-            String nuevoNombre = crearNombreArchivo(archivo.getName(), "descifrado");
-            File nuevoArchivo = new File(archivo.getParent(), nuevoNombre);
-            Files.write(nuevoArchivo.toPath(), descifrado.getBytes(StandardCharsets.UTF_8));
+        String nuevoNombre = crearNombreArchivo(archivo.getName(), "descifrado");
+        File nuevoArchivo = new File(archivo.getParent(), nuevoNombre);
+        Files.write(nuevoArchivo.toPath(), descifrado.getBytes(StandardCharsets.UTF_8));
 
-            return nuevoArchivo.getAbsolutePath();
-        } catch (Exception e) {
-            return "Error al descifrar archivo: " + e.getMessage();
-        }
+        return nuevoArchivo.getAbsolutePath();
     }
 
     /**
@@ -120,6 +123,8 @@ public class CifradoVigenere {
      * @param nombreOriginal Nombre original del archivo
      * @param operacion Texto a añadir como sufijo
      * @return Nombre modificado con sufijo
+     *
+     * @author Telmo
      */
     private static String crearNombreArchivo(String nombreOriginal, String operacion) {
         int indicePunto = nombreOriginal.lastIndexOf('.');

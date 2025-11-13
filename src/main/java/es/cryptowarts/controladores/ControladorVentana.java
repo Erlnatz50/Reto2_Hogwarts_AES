@@ -5,10 +5,13 @@ import es.cryptowarts.cifrado.CifradoVigenere;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -17,103 +20,76 @@ import java.util.ResourceBundle;
  * Controlador de la ventana principal de la aplicación de cifrado.
  * Gestiona la interacción con la interfaz JavaFX y la lógica de cifrado y descifrado
  * según la selección del usuario (Vigenere o AES).
+ *
+ * @author Telmo y Erlantz
+ * @version 1.0
  */
 public class ControladorVentana {
 
-    /**
-     * Logger para esta clase.
-     */
+    /** Logger para esta clase. */
     private static final Logger logger = LoggerFactory.getLogger(ControladorVentana.class);
 
-    /**
-     * Bundle para internacionalización de mensajes.
-     */
+    /** Bundle para internacionalización de mensajes. */
     private ResourceBundle bundle;
 
-    /**
-     * Etiqueta para mostrar la ruta del archivo procesado.
-     */
+    /** Etiqueta para mostrar la ruta del archivo procesado. */
     @FXML
     private Label lblArchivo;
 
-    /**
-     * Etiqueta para mostrar mensajes informativos o de error.
-     */
+    /** Etiqueta para mostrar mensajes informativos o de error. */
     @FXML
     private Label lblMensaje;
 
-    /**
-     * Área de texto de salida, donde se coloca el texto cifrado o descifrado.
-     */
+    /** Área de texto de salida, donde se coloca el texto cifrado o descifrado. */
     @FXML
     private TextArea txtDcha;
 
-    /**
-     * Área de texto de entrada para el texto a procesar.
-     */
+    /** Área de texto de entrada para el texto a procesar. */
     @FXML
     private TextArea txtIzda;
 
-    /**
-     * ComboBox para seleccionar la acción: cifrar o descifrar.
-     */
+    /** ComboBox para seleccionar la acción: cifrar o descifrar. */
     @FXML
     private ComboBox<String> cmbOpcion;
 
-    /**
-     * Botón para realizar la acción de cifrar/descifrar en textos.
-     */
+    /** Botón para realizar la acción de cifrar/descifrar en textos. */
     @FXML
     private Button btnAreas;
 
-    /**
-     * Botón para limpiar áreas de texto.
-     */
+    /** Botón para limpiar áreas de texto. */
     @FXML
     private Button btnLimpiarAreas;
 
-    /**
-     * Botón para seleccionar archivo.
-     */
+    /** Botón para seleccionar archivo. */
     @FXML
     private Button btnSelecFichero;
 
-    /**
-     * RadioButton para seleccionar cifrado Vigenere.
-     */
+    /** RadioButton para seleccionar cifrado Vigenere. */
     @FXML
     private RadioButton rbVigenere;
 
-    /**
-     * RadioButton para seleccionar cifrado AES.
-     */
+    /** RadioButton para seleccionar cifrado AES. */
     @FXML
     private RadioButton rbAES;
 
-    /**
-     * Grupo de toggle para radio buttons de selección de cifrado.
-     */
+    /** Grupo de toggle para radio buttons de selección de cifrado. */
     @FXML
     private ToggleGroup grupoCifrado;
 
-    /**
-     * Constante para texto de opción de cifrar.
-     */
+    /** Constante para texto de opción de cifrar. */
     private static final String CIFRAR = "cifrar";
 
-    /**
-     * Constante para texto de opción de descifrar.
-     */
+    /** Constante para texto de opción de descifrar. */
     private static final String DESCIFRAR = "descifrar";
 
-    /**
-     * Constante para texto de opción "selecciona opción".
-     */
+    /** Constante para texto de opción "selecciona opción". */
     private static final String SELECCIONA_OPCION = "seleccionaOpcion";
 
     /**
      * Inicializa el controlador tras cargarse la interfaz.
      * Configura combo box, estado inicial de botones y toggle group.
+     *
+     * @author Telmo
      */
     @FXML
     public void initialize() {
@@ -131,13 +107,47 @@ public class ControladorVentana {
         grupoCifrado = new ToggleGroup();
         rbVigenere.setToggleGroup(grupoCifrado);
         rbAES.setToggleGroup(grupoCifrado);
+        rbVigenere.setSelected(true);
+    }
 
-        rbVigenere.setSelected(true); // opción por defecto
+    @FXML
+    void idiomaEspaniol() {
+        cambiarIdioma(new Locale("es"));
+    }
+
+    @FXML
+    void idiomaEuskera() {
+        cambiarIdioma(new Locale("eu"));
+    }
+
+    @FXML
+    void idiomaIngles() {
+        cambiarIdioma(Locale.ENGLISH);
+    }
+
+    private void cambiarIdioma(Locale nuevoLocale) {
+        try {
+            this.bundle = ResourceBundle.getBundle("es.cryptowarts.mensaje", nuevoLocale);  // Actualiza el ResourceBundle usado
+
+            // Actualiza los textos visibles en la UI
+            cmbOpcion.getItems().setAll(bundle.getString("cifrar"), bundle.getString("descifrar"));
+            cmbOpcion.setValue(bundle.getString("seleccionaOpcion"));
+            btnSelecFichero.setText(bundle.getString("seleccionaArchivo"));
+            lblMensaje.setText("");
+            lblMensaje.setVisible(false);
+            btnLimpiarAreas.setText(bundle.getString("btnLimpiarAreas"));
+
+            // Actualiza cualquier otro texto o label que uses, así como tooltips, etc.
+        } catch (Exception e) {
+            mandarAlertas(Alert.AlertType.ERROR, "Error", null, "No se pudo cambiar el idioma: " + e.getMessage());
+        }
     }
 
     /**
-     * Método llamado al escribir en el área de texto de entrada.
+     * Metodo llamado al escribir en el área de texto de entrada.
      * Activa o desactiva botones según si el área está vacía o no.
+     *
+     * @author Telmo
      */
     @FXML
     void areaEscribir() {
@@ -149,6 +159,8 @@ public class ControladorVentana {
     /**
      * Acción asociada al botón para seleccionar un archivo y procesarlo (cifrar/descifrar).
      * Solicita clave y realiza operación según selección del radio button y combo.
+     *
+     * @author Telmo
      */
     @FXML
     void btnFichero() {
@@ -158,15 +170,13 @@ public class ControladorVentana {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(bundle.getString("seleccionaArchivo"));
         File file = fileChooser.showOpenDialog(null);
-
         if (file == null) {
             return;
         }
 
         String clave = pedirClave(bundle.getString("introduceClave"));
         if (clave == null || clave.trim().isEmpty()) {
-            mandarAlertas(Alert.AlertType.WARNING, bundle.getString("claveInvalida"), null,
-                    bundle.getString("claveInvalidaMensaje"));
+            mandarAlertas(Alert.AlertType.WARNING, bundle.getString("claveInvalida"), null, bundle.getString("claveInvalidaMensaje"));
             return;
         }
 
@@ -192,29 +202,32 @@ public class ControladorVentana {
             lblMensaje.setVisible(true);
             logger.info("Archivo procesado: {}", resultado);
 
-        } catch (Exception e) {
-            logger.error("Error procesando archivo {}", e.getMessage(), e);
-            mandarAlertas(Alert.AlertType.ERROR, bundle.getString("error"), null,
-                    bundle.getString("noSePudoProcesarMensaje") + " " + e.getMessage());
+        } catch (IOException | GeneralSecurityException e) {
+            logger.error("Error procesando archivo: {}", e.getMessage(), e);
+            mandarAlertas(Alert.AlertType.ERROR, bundle.getString("error"), null, bundle.getString("noSePudoProcesarMensaje") + " " + e.getMessage());
+        }
+        catch (Exception e) {
+            logger.error("Error inesperado procesando archivo: {}", e.getMessage(), e);
+            mandarAlertas(Alert.AlertType.ERROR, bundle.getString("error"), null, e.getMessage());
         }
     }
 
     /**
      * Acción asociada al botón para cifrar o descifrar el texto en el área de entrada.
      * Utiliza el radio button para elegir el tipo de cifrado.
+     *
+     * @author Telmo
      */
     public void btnAccion() {
         String texto = txtIzda.getText();
         if (texto == null || texto.isEmpty()) {
-            mandarAlertas(Alert.AlertType.WARNING, bundle.getString("atencion"), bundle.getString("noHayTextoTitulo"),
-                    bundle.getString("noHayTextoMensaje"));
+            mandarAlertas(Alert.AlertType.WARNING, bundle.getString("atencion"), bundle.getString("noHayTextoTitulo"), bundle.getString("noHayTextoMensaje"));
             return;
         }
 
         String clave = pedirClave(bundle.getString("introduceClave"));
         if (clave == null || clave.trim().isEmpty()) {
-            mandarAlertas(Alert.AlertType.WARNING, bundle.getString("atencion"), bundle.getString("opcionInvalida"),
-                    bundle.getString("claveInvalidaMensaje"));
+            mandarAlertas(Alert.AlertType.WARNING, bundle.getString("atencion"), bundle.getString("opcionInvalida"), bundle.getString("claveInvalidaMensaje"));
             return;
         }
 
@@ -233,30 +246,56 @@ public class ControladorVentana {
                     resultado = CifradoAES.descifrarTexto(texto, clave);
                 }
             } else {
-                mandarAlertas(Alert.AlertType.WARNING, bundle.getString("atencion"), null,
-                        bundle.getString("opcionInvalidaMensaje"));
+                mandarAlertas(Alert.AlertType.WARNING, bundle.getString("atencion"), null, bundle.getString("opcionInvalidaMensaje"));
                 return;
             }
 
             txtDcha.setText(resultado);
 
+        } catch (GeneralSecurityException e) {
+            logger.error("Error de seguridad al procesar el texto: {}", e.getMessage(), e);
+            mandarAlertas(Alert.AlertType.ERROR, bundle.getString("error"), null, bundle.getString("noSePuedeProcesarTexto") + " " + e.getMessage());
         } catch (Exception e) {
-            logger.error("Error al procesar el texto", e);
-            mandarAlertas(Alert.AlertType.ERROR, bundle.getString("error"), bundle.getString("noSePuedeProcesarTexto") + " ",
-                    e.getMessage());
+            logger.error("Error inesperado al procesar el texto: {}", e.getMessage(), e);
+            mandarAlertas(Alert.AlertType.ERROR, bundle.getString("error"), null, e.getMessage());
         }
     }
 
     /**
      * Muestra información "Acerca de" en un cuadro de diálogo.
+     *
+     * @author Erlantz
      */
     @FXML
     void btnAcercaDe() {
-        mandarAlertas(Alert.AlertType.INFORMATION, bundle.getString("acercaDe"), null, bundle.getString("acercaDeMensaje"));
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle(bundle.getString("acercaDe"));
+
+        // Crear el enlace clickable
+        Hyperlink link = new Hyperlink(bundle.getString("manualUsuario"));
+        link.setOnAction(event -> {
+            try {
+                java.awt.Desktop.getDesktop().browse(new java.net.URI("https://drive.google.com/file/d/1jCWVJC24D0j0qmfRjKtLzbpwdd0fzyXr/view"));
+            } catch (Exception e) {
+                mandarAlertas(Alert.AlertType.ERROR, bundle.getString("error"), null, bundle.getString("noSePuedeEnlace") + " " + e.getMessage());
+            }
+        });
+
+        // Texto descriptivo junto al enlace
+        Label label = new Label(bundle.getString("acercaDeMensaje"));
+
+        VBox content = new VBox(label, link);
+        content.setSpacing(10);
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+        dialog.showAndWait();
     }
 
     /**
      * Limpia ambas áreas de texto tras confirmación del usuario.
+     *
+     * @author Telmo
      */
     @FXML
     void btnLimpiar() {
@@ -272,6 +311,8 @@ public class ControladorVentana {
 
     /**
      * Cierra la aplicación tras confirmación del usuario.
+     *
+     * @author Telmo
      */
     @FXML
     void btnCerrar() {
@@ -284,11 +325,12 @@ public class ControladorVentana {
     /**
      * Acción para manejar cambio en las opciones del ComboBox.
      * Actualiza texto y estado de botones según la opción seleccionada.
+     *
+     * @author Telmo
      */
     @FXML
     public void cmbAccion() {
         String opcion = cmbOpcion.getValue();
-
         btnSelecFichero.setText(bundle.getString("seleccionaArchivo"));
 
         if (opcion == null) {
@@ -317,6 +359,8 @@ public class ControladorVentana {
      * @param titulo        Título de la ventana de alerta
      * @param mensajeTitulo Texto del encabezado de la alerta (puede ser {@code null})
      * @param mensaje       Texto del contenido de la alerta
+     *
+     * @author Erlantz
      */
     private void mandarAlertas(Alert.AlertType tipo, String titulo, String mensajeTitulo, String mensaje) {
         Alert alerta = new Alert(tipo);
@@ -333,6 +377,8 @@ public class ControladorVentana {
      * @param titulo  Título de la ventana de alerta
      * @param mensaje Texto del contenido de la alerta
      * @return {@code true} si el usuario confirma la acción, {@code false} en caso contrario
+     *
+     * @author Erlantz
      */
     private boolean mandarConfirmacion(String titulo, String mensaje) {
         Alert alerta = new Alert(Alert.AlertType.CONFIRMATION);
@@ -348,6 +394,8 @@ public class ControladorVentana {
      *
      * @param mensaje Mensaje que explica la solicitud de la clave
      * @return Clave introducida o {@code null} si se cancela
+     *
+     * @author Erlantz
      */
     private String pedirClave(String mensaje) {
         TextInputDialog dialog = new TextInputDialog();

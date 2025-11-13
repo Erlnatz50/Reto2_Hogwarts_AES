@@ -37,6 +37,8 @@ public class App extends Application {
      * Si ocurre algún error, muestra una alerta y registra el error en el Log.
      *
      * @param stage Stage principal proporcionado por JavaFX.
+     *
+     * @author Erlantz
      */
     @Override
     public void start(Stage stage) {
@@ -99,6 +101,8 @@ public class App extends Application {
     /**
      * Metodo que se ejecuta cuando cierra la aplicación.
      * Registra un mensaje de cierre en el archivo de Log.
+     *
+     * @author Erlantz
      */
     @Override
     public void stop(){
@@ -109,6 +113,8 @@ public class App extends Application {
      * Metodo principal que lanza la aplicación JavaFX
      *
      * @param args Argumentos de línea de comandos (no usados).
+     *
+     * @author Erlantz
      */
     public static void main(String[] args) {
         logger.info("Iniciando aplicación Cifrar y Descifrar en AES...");
