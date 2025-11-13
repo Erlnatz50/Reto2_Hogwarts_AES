@@ -11,7 +11,7 @@ import java.io.File;
 /**
  * Clase para cifrar y descifrar texto y archivos usando AES en modo CBC con PKCS5Padding.
  */
-public class Cifrado {
+public class CifradoAES {
 
     /** Algoritmo de cifrado utilizado */
     private static final String ALGORITMO = "AES/CBC/PKCS5Padding";
