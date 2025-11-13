@@ -46,7 +46,7 @@ public class App extends Application {
             Locale locale = new Locale("es");
 
             // Bundle del sistema de internacionalización
-            bundle = ResourceBundle.getBundle("es.cryptowarts.mensajes", locale);
+            bundle = ResourceBundle.getBundle("es.cryptowarts.mensaje", locale);
 
             logger.debug("Cargando el archivo FXML: ventana.fxml");
             FXMLLoader loaded = new FXMLLoader(getClass().getResource("/es/cryptowarts/fxml/ventana.fxml"), bundle);
@@ -67,10 +67,8 @@ public class App extends Application {
             stage.setTitle("Cifra o descifra con el algortimo de AES");
             stage.setScene(scene);
             stage.setResizable(true);
-            stage.setMinWidth(400);
-            stage.setMinHeight(380);
-            stage.setMaxWidth(500);
-            stage.setMaxHeight(500);
+            stage.setMinWidth(650);
+            stage.setMinHeight(500);
             stage.show();
 
         } catch (Exception e) {

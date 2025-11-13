@@ -1,3 +1,4 @@
+
 package es.cryptowarts.controladores;
 
 import es.cryptowarts.cifrado.Cifrado;
@@ -19,52 +20,71 @@ import java.util.ResourceBundle;
  */
 public class ControladorVentana {
 
-    /** Logger para esta clase */
+    /**
+     * Logger para esta clase
+     */
     private static final Logger logger = LoggerFactory.getLogger(ControladorVentana.class);
 
-    /** Bundle del sistema de internacionalización */
+    /**
+     * Bundle del sistema de internacionalización
+     */
     private ResourceBundle bundle;
 
-    /**  */
+    /**
+     *
+     */
     @FXML
     private Label lblArchivo;
 
-    /**  */
+    /**
+     *
+     */
     @FXML
     private Label lblMensaje;
 
-    /**  */
+    /**
+     *
+     */
     @FXML
     private TextArea txtDcha;
 
-    /**  */
+    /**
+     *
+     */
     @FXML
     private TextArea txtIzda;
 
-    /**  */
+    /**
+     *
+     */
     @FXML
     private ComboBox<String> cmbOpcion;
 
-    /**  */
+    /**
+     *
+     */
     @FXML
     private Button btnAreas;
 
-    /**  */
+    /**
+     *
+     */
     @FXML
     private Button btnLimpiarAreas;
 
-    /**  */
+    /**
+     *
+     */
     @FXML
     private Button btnSelecFichero;
 
     @FXML
     public void initialize() {
-        bundle = ResourceBundle.getBundle("es.cryptowarts.mensajes", Locale.getDefault());
+        bundle = ResourceBundle.getBundle("es.cryptowarts.mensaje", Locale.getDefault());
 
-        cmbOpcion.getItems().addAll( "Cifrar", "Descifrar");
+        cmbOpcion.getItems().addAll("Cifrar", "Descifrar");
         cmbOpcion.setValue("Selecciona una opción");
 
-        txtDcha.setDisable(true);
         btnAreas.setDisable(true);
         btnLimpiarAreas.setDisable(true);
         btnSelecFichero.setDisable(true);
@@ -75,6 +95,7 @@ public class ControladorVentana {
     @FXML
     void areaEscribir() {
         btnAreas.setDisable(txtIzda.getText().trim().isEmpty());
+        btnLimpiarAreas.setDisable(txtIzda.getText().trim().isEmpty());
     }
 
     @FXML
@@ -92,13 +113,13 @@ public class ControladorVentana {
 
         String clave = pedirClave("Introduce la clave para cifrar/descifrar");
         if (clave == null || clave.trim().isEmpty()) {
-            mandarAlertas(Alert.AlertType.WARNING, "Clave inválida", "","Por favor, introduce una clave válida.");
+            mandarAlertas(Alert.AlertType.WARNING, "Clave inválida", "", "Por favor, introduce una clave válida.");
             return;
         }
 
         String opcion = cmbOpcion.getValue();
         if (opcion == null || opcion.equals("Selecciona una opción")) {
-            mandarAlertas(Alert.AlertType.WARNING, "Opción inválida", "","Seleccione 'Cifrar' o 'Descifrar' antes de continuar.");
+            mandarAlertas(Alert.AlertType.WARNING, "Opción inválida", "", "Seleccione 'Cifrar' o 'Descifrar' antes de continuar.");
             return;
         }
 
@@ -110,8 +131,8 @@ public class ControladorVentana {
                 resultado = Cifrado.descifrarArchivo(file.getAbsolutePath(), clave);
             }
 
-            lblArchivo.setText(file.getName());
-            lblMensaje.setText("Archivo procesado correctamente:");
+            lblArchivo.setText(resultado);
+            lblMensaje.setText("Archivo procesado:");
             lblMensaje.setVisible(true);
             logger.info("Archivo procesado: {}", resultado);
 
@@ -148,7 +169,7 @@ public class ControladorVentana {
                 resultado = Cifrado.descifrarTexto(texto, clave);
             }
             txtDcha.setText(resultado);
-            txtDcha.setDisable(false);
+
 
         } catch (Exception e) {
             logger.error("Error al procesar el texto", e);
@@ -163,10 +184,14 @@ public class ControladorVentana {
 
     @FXML
     void btnLimpiar() {
-        txtDcha.clear();
-        txtIzda.clear();
-        btnAreas.setDisable(true);
-        lblMensaje.setVisible(false);
+        boolean confirmar = mandarConfirmacion("Limpiar áreas", "¿Deseas limpiar las áreas?");
+        if (confirmar) {
+            txtDcha.clear();
+            txtIzda.clear();
+            btnAreas.setDisable(true);
+            lblMensaje.setVisible(false);
+            btnLimpiarAreas.setDisable(true);
+        }
     }
 
     @FXML
@@ -187,22 +212,22 @@ public class ControladorVentana {
             return;
         }
 
-        btnAreas.setDisable(false);
+
         btnSelecFichero.setDisable(false);
 
         switch (opcion) {
             case "Cifrar":
-                btnSelecFichero.setText("Selecciona el fichero para cifrar");
+                btnSelecFichero.setText("Selecciona un archivo");
                 btnAreas.setText("Cifrar");
                 break;
 
             case "Descifrar":
-                btnSelecFichero.setText("Selecciona el fichero para descifrar");
+                btnSelecFichero.setText("Selecciona un archivo");
                 btnAreas.setText("Descifrar");
                 break;
 
             default:
-                btnSelecFichero.setText("Selecciona el fichero");
+                btnSelecFichero.setText("Selecciona un archivo");
                 btnAreas.setText("Elige una opción");
                 btnAreas.setDisable(true);
                 btnSelecFichero.setDisable(true);
@@ -212,10 +237,10 @@ public class ControladorVentana {
     /**
      * Muestra una alerta JavaFX con los datos proporcionados.
      *
-     * @param tipo Tipo de alerta (INFO, WARNING, ERROR...)
-     * @param titulo Título de la ventana de alerta
+     * @param tipo          Tipo de alerta (INFO, WARNING, ERROR...)
+     * @param titulo        Título de la ventana de alerta
      * @param mensajeTitulo Texto del encabezado de la alerta
-     * @param mensaje Texto del contenido de la alerta
+     * @param mensaje       Texto del contenido de la alerta
      */
     private void mandarAlertas(Alert.AlertType tipo, String titulo, String mensajeTitulo, String mensaje) {
         Alert alerta = new Alert(tipo);
@@ -229,7 +254,7 @@ public class ControladorVentana {
     /**
      * Muestra una alerta de confirmación y espera la respuesta del usuario.
      *
-     * @param titulo Título de la ventana de alerta
+     * @param titulo  Título de la ventana de alerta
      * @param mensaje Texto del contenido de la alerta
      * @return {@code true} si el usuario confirma la acción, {@code false} en caso contrario
      */
