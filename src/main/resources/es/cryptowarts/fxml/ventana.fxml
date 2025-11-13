@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.cryptowarts.controladores.ControladorVentana">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.cryptowarts.controladores.ControladorVentana">
 
    <top>
       <MenuBar BorderPane.alignment="CENTER">
@@ -31,21 +31,21 @@
               <MenuItem mnemonicParsing="false" onAction="#btnAcercaDe" text="%acercaDe" />
           </Menu>
          <Menu mnemonicParsing="false" text="%idioma">
-           <MenuItem mnemonicParsing="false" text="Español">
+           <MenuItem mnemonicParsing="false" onAction="#idiomaEspaniol" text="Español">
               <graphic>
                  <ImageView fitHeight="16" fitWidth="24" pickOnBounds="true" preserveRatio="true">
                      <Image url="@../imagenes/logo_españa.png" />
                  </ImageView>
               </graphic>
            </MenuItem>
-           <MenuItem mnemonicParsing="false" text="Euskera">
+           <MenuItem mnemonicParsing="false" onAction="#idiomaEuskera" text="Euskera">
               <graphic>
                  <ImageView fitHeight="16" fitWidth="24" pickOnBounds="true" preserveRatio="true">
                      <Image url="@../imagenes/logo_euskera.png" />
                  </ImageView>
               </graphic>
            </MenuItem>
-           <MenuItem mnemonicParsing="false" text="English">
+           <MenuItem mnemonicParsing="false" onAction="#idiomaIngles" text="English">
               <graphic>
                  <ImageView fitHeight="16" fitWidth="24" pickOnBounds="true" preserveRatio="true">
                      <Image url="@../imagenes/logo_ingles.png" />
@@ -149,7 +149,6 @@
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
-               <children>
                   <ComboBox fx:id="cmbOpcion" maxWidth="1.7976931348623157E308" onAction="#cmbAccion" prefHeight="25.0" prefWidth="212.0">
                      <tooltip>
                         <Tooltip text="%cmbMensaje" />
@@ -171,7 +170,6 @@
                         <Insets top="10.0" />
                      </GridPane.margin>
                   </RadioButton>
-               </children>
                <BorderPane.margin>
                   <Insets top="5.0" />
                </BorderPane.margin>
@@ -210,33 +208,23 @@
                   <Tooltip text="%btnLimpiarAreasMensaje" />
                </tooltip>
             </Button>
-         <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-            <image>
+         <ImageView accessibleText="%casaHufflepuff" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
                <Image url="@../imagenes/escudoCasa-01.png" />
-            </image>
          </ImageView>
-         <ImageView depthTest="ENABLE" fitHeight="40.0" fitWidth="40.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
-            <image>
+         <ImageView accessibleText="%casaSlytherin" depthTest="ENABLE" fitHeight="40.0" fitWidth="40.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                <Image url="@../imagenes/escudoCasa-04.png" />
-            </image>
             <GridPane.margin>
                <Insets />
             </GridPane.margin>
          </ImageView>
-         <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-            <image>
+         <ImageView accessibleText="%casaGryffindor" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
                <Image url="@../imagenes/escudoCasa-02.png" />
-            </image>
          </ImageView>
-         <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-            <image>
+         <ImageView accessibleText="%casaRavenclaw" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
                <Image url="@../imagenes/escudoCasa-03.png" />
-            </image>
          </ImageView>
-         <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-            <image>
+         <ImageView accessibleText="%casaHogwarts" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
                <Image url="@../imagenes/hogwarts-01.png" />
-            </image>
          </ImageView>
          <BorderPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
