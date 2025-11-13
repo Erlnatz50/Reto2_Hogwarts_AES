@@ -10,6 +10,7 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -19,7 +20,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.cryptowarts.controladores.ControladorVentana">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.cryptowarts.controladores.ControladorVentana">
 
    <top>
       <MenuBar BorderPane.alignment="CENTER">
@@ -157,12 +158,15 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="15.0" />
                      </GridPane.margin>
                   </ComboBox>
-                  <RadioButton alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" text="Vigenere" GridPane.columnIndex="2">
+                  <RadioButton fx:id="rbVigenere" alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" text="Vigenere" GridPane.columnIndex="2">
                      <GridPane.margin>
                         <Insets top="10.0" />
                      </GridPane.margin>
+                     <toggleGroup>
+                        <ToggleGroup fx:id="grupoCifrado" />
+                     </toggleGroup>
                   </RadioButton>
-                  <RadioButton mnemonicParsing="false" text="AES" GridPane.columnIndex="3">
+                  <RadioButton fx:id="rbAES" mnemonicParsing="false" selected="true" text="AES" toggleGroup="$grupoCifrado" GridPane.columnIndex="3">
                      <GridPane.margin>
                         <Insets top="10.0" />
                      </GridPane.margin>
@@ -179,13 +183,18 @@
    <bottom>
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
-            <Button fx:id="btnAreas" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#btnAccion" text="%btnAreas" GridPane.halignment="RIGHT">
+            <Button fx:id="btnAreas" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#btnAccion" text="%btnAreas" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
                <tooltip>
                   <Tooltip text="%btnAreasMensaje" />
                </tooltip>
@@ -193,7 +202,7 @@
                   <Insets bottom="10.0" right="5.0" top="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="btnLimpiarAreas" mnemonicParsing="false" onAction="#btnLimpiar" text="%btnLimpiarAreas" GridPane.columnIndex="1" GridPane.halignment="LEFT">
+            <Button fx:id="btnLimpiarAreas" mnemonicParsing="false" onAction="#btnLimpiar" text="%btnLimpiarAreas" GridPane.columnIndex="4" GridPane.halignment="LEFT">
                <GridPane.margin>
                   <Insets bottom="10.0" left="5.0" top="10.0" />
                </GridPane.margin>
@@ -201,8 +210,36 @@
                   <Tooltip text="%btnLimpiarAreasMensaje" />
                </tooltip>
             </Button>
+         <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+            <image>
+               <Image url="@../imagenes/escudoCasa-01.png" />
+            </image>
+         </ImageView>
+         <ImageView depthTest="ENABLE" fitHeight="40.0" fitWidth="40.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <image>
+               <Image url="@../imagenes/escudoCasa-04.png" />
+            </image>
+            <GridPane.margin>
+               <Insets />
+            </GridPane.margin>
+         </ImageView>
+         <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+            <image>
+               <Image url="@../imagenes/escudoCasa-02.png" />
+            </image>
+         </ImageView>
+         <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+            <image>
+               <Image url="@../imagenes/escudoCasa-03.png" />
+            </image>
+         </ImageView>
+         <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+            <image>
+               <Image url="@../imagenes/hogwarts-01.png" />
+            </image>
+         </ImageView>
          <BorderPane.margin>
-            <Insets bottom="10.0" top="5.0" />
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </BorderPane.margin>
       </GridPane>
    </bottom>
