@@ -110,21 +110,35 @@ public class ControladorVentana {
         rbVigenere.setSelected(true);
     }
 
+    /**
+     * Cambia el idioma de la interfaz al Español.
+     */
     @FXML
     void idiomaEspaniol() {
         cambiarIdioma(new Locale("es"));
     }
 
+    /**
+     * Cambia el idioma de la interfaz al Euskera.
+     */
     @FXML
     void idiomaEuskera() {
         cambiarIdioma(new Locale("eu"));
     }
 
+    /**
+     * Cambia el idioma de la interfaz al Inglés.
+     */
     @FXML
     void idiomaIngles() {
         cambiarIdioma(Locale.ENGLISH);
     }
 
+    /**
+     * Cambia el idioma actual de la interfaz gráfica.
+     *
+     * @param nuevoLocale Nueva configuración regional (Locale) que se va a aplicar.
+     */
     private void cambiarIdioma(Locale nuevoLocale) {
         try {
             this.bundle = ResourceBundle.getBundle("es.cryptowarts.mensaje", nuevoLocale);  // Actualiza el ResourceBundle usado
